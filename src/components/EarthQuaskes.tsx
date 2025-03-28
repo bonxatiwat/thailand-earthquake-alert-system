@@ -11,6 +11,7 @@ import { FaLevelDownAlt } from "react-icons/fa";
 import { GiRadarSweep } from "react-icons/gi";
 import { MdLocationPin } from "react-icons/md";
 import { WiEarthquake, WiTime3 } from "react-icons/wi";
+import ColorEarhquakeSeverity from "./ColorEarhquakeSeverity";
 
 interface Earthquake {
   OriginThai: string;
@@ -28,11 +29,9 @@ const EarthQuaskes = () => {
   const [isLoading, setIsLoading] = useState<boolean>(true);
   const [quakes, setQuakes] = useState<Earthquake[]>([]);
   const [lastUpdate, setLastUpdate] = useState<string>("xx:xx:xx");
-  // const [countdown, setCountdown] = useState(30);
 
   const fetchData = async () => {
     setIsLoading(true);
-    // setCountdown(30); // รีเซ็ต countdown ทุกครั้งที่ดึงข้อมูลใหม่
     const res = await fetch("/api/earthquake", {
       method: "GET",
       headers: {
@@ -59,43 +58,34 @@ const EarthQuaskes = () => {
   };
 
   useEffect(() => {
-    fetchData(); // ดึงทันทีรอบแรก
+    fetchData();
     setLastUpdate(
       new Date().toLocaleTimeString("th-TH", {
         timeZone: "Asia/Bangkok",
       })
     );
-
-    // Countdown timer: นับถอยหลังทุกวินาที
-    // const countdownTimer = setInterval(() => {
-    //   setCountdown((prev) => (prev === 1 ? 30 : prev - 1));
-    // }, 1000);
-
-    // Auto refresh เมื่อ countdown = 0
-    // const autoRefresh = setInterval(() => {
-    //   fetchData();
-    // }, 30000); // 30 วิ
-
-    // Clear ทั้งสอง timer เมื่อ component ออกจากหน้าจอ
-    return () => {
-      // clearInterval(countdownTimer);
-      // clearInterval(autoRefresh);
-    };
   }, []);
   return (
     <div className="m-2">
-      <p className="text-sm text-gray-500 text-right">
-        อัปเดตล่าสุด: {lastUpdate} ข้อมูลจาก{" "}
-        <a
-          href="https://data.tmd.go.th/api/DailySeismicEvent/v1/"
-          target="_blank"
-          rel="noopener noreferrer"
-          className="text-blue-500 hover:underline"
-        >
-          กรมอุตุนิยมวิทยา
-        </a>
+      <p className="text-center text-sm">
+        รายงานผลการเกิดแผ่นดินไหวในประเทศไทย ภูมิภาคใกล้เคียง
+        และข้อมูลการเกิดแผ่นดินไหวทั่วโลก
       </p>
-      <ScrollArea className="h-[calc(100vh-80px)] rounded-md border p-4 overflow-auto">
+      <div className="flex items-center mb-4 md:flex-row md:justify-between">
+        <ColorEarhquakeSeverity />
+        <p className="text-sm text-gray-500 text-right">
+          อัปเดตล่าสุด: {lastUpdate} ข้อมูลจาก{" "}
+          <a
+            href="https://data.tmd.go.th/api/DailySeismicEvent/v1/"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="text-blue-500 hover:underline"
+          >
+            กรมอุตุนิยมวิทยา
+          </a>
+        </p>
+      </div>
+      <ScrollArea className="h-[calc(100vh-260px)] md:h-[calc(100vh-200px)] rounded-md border p-4 overflow-auto">
         <div className=" mx-auto">
           {isLoading ? (
             <div className="flex items-center justify-center h-full">
@@ -108,20 +98,19 @@ const EarthQuaskes = () => {
                   key={index}
                   className={cn(
                     "p-4 border rounded-lg shadow-md bg-white m-2",
-                    quake.EarthquakeSeverity.color === "gray" && "bg-gray-100",
+                    quake.EarthquakeSeverity.color === "gray" && "bg-white",
                     quake.EarthquakeSeverity.color === "green" &&
-                      "bg-green-100",
+                      "bg-green-500",
                     quake.EarthquakeSeverity.color === "limegreen" &&
-                      "bg-limegreen-100",
+                      "bg-green-500/40",
                     quake.EarthquakeSeverity.color === "yellow" &&
-                      "bg-yellow-100",
+                      "bg-yellow-500/40",
                     quake.EarthquakeSeverity.color === "orange" &&
-                      "bg-orange-100",
+                      "bg-orange-500/40",
                     quake.EarthquakeSeverity.color === "orangered" &&
-                      "bg-orangered-100",
-                    quake.EarthquakeSeverity.color === "red" && "bg-red-100",
-                    quake.EarthquakeSeverity.color === "darkred" &&
-                      "bg-darkred-100"
+                      "bg-orangered-500/40",
+                    quake.EarthquakeSeverity.color === "red" && "bg-red-500/40",
+                    quake.EarthquakeSeverity.color === "darkred" && "bg-red-500"
                   )}
                 >
                   <h2 className="text-xl font-semibold">{quake.TitleThai}</h2>
